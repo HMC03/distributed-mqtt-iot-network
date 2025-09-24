@@ -3,7 +3,7 @@ import spidev
 import paho.mqtt.client as mqtt
 
 # MQTT Variables
-brokerIP = "10.152.53.186"
+brokerIP = os.environ.get("MQTT_BROKER", "localhost")
 brokerPort = 1883
 timeoutSeconds = 60
 
