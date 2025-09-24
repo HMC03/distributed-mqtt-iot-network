@@ -2,7 +2,7 @@ import os
 import paho.mqtt.client as mqtt
 from datetime import datetime
 
-BROKER = os.environ.get("MQTT_BROKER", "localhost")
+brokerIP = os.environ.get("MQTT_BROKER", "localhost")
 brokerPort = 1883            # default MQTT port
 
 # Handle connection
@@ -10,7 +10,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
     if reason_code == 0:
         print("Connected to broker")
         # Subscribe to all topics
-        client.subscribe("#")
+        client.subscribe("#", qos=2)
     else:
         print(f"Failed to connect, reason code: {reason_code}")
 
@@ -26,7 +26,7 @@ laptop2.on_message = on_message
 
 # Connect and loop forever
 try:
-    laptop2.connect(BROKER, brokerPort, keepalive=60)
+    laptop2.connect(brokerIP, brokerPort, keepalive=60)
     laptop2.loop_forever()
 except KeyboardInterrupt:
     print("\nDisconnected by user")

@@ -21,8 +21,8 @@ last_values = {
 def on_connect(client, userdata, flags, reason_code, properties):
     print("Connected to broker")
     
-    client.subscribe("lightSensor")
-    client.subscribe("threshold")
+    client.subscribe("lightSensor", qos=2)
+    client.subscribe("threshold", qos=2)
 
 # Save the last values on topic
 def on_message(client, userdata, msg):
@@ -37,13 +37,13 @@ raspiA.on_connect = on_connect
 raspiA.on_message = on_message
 
 # Last Will (retained "offline")
-raspiA.will_set("Status/RaspberryPiA", payload="offline", retain=True)
+raspiA.will_set("Status/RaspberryPiA", payload="offline", qos=2, retain=True)
 
 # Connect to broker
 raspiA.connect(brokerIP, brokerPort, timeoutSeconds)
 
 # Publish "online" status (retained)
-raspiA.publish("Status/RaspberryPiA", "online", retain=True)
+raspiA.publish("Status/RaspberryPiA", "online", qos=2, retain=True)
 
 # Start loop in background so MQTT stays alive
 raspiA.loop_start()
@@ -70,12 +70,12 @@ try:
 
         # Update lightSensor Value
         if(abs(last_values["lightSensor"] - lightSensor) > minDiff):
-            raspiA.publish("lightSensor", str(lightSensor), retain=True)
+            raspiA.publish("lightSensor", str(lightSensor), qos=2, retain=True)
             print("lightSensor: ", lightSensor)
 
         # Update threshold Value
         if(abs(last_values["threshold"] - threshold) > minDiff):
-            raspiA.publish("threshold", str(threshold), retain=True)
+            raspiA.publish("threshold", str(threshold), qos=2, retain=True)
             print("threshold: ", threshold)
 
         # Sample every 100ms
@@ -83,7 +83,7 @@ try:
 
 finally:
     # Publish "offline" retained status before shutting down
-    raspiA.publish("Status/RaspberryPiA", "offline", retain=True)
+    raspiA.publish("Status/RaspberryPiA", "offline", qos=2, retain=True)
     raspiA.loop_stop()
     raspiA.disconnect()
     spi.close()
