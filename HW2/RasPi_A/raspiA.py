@@ -2,10 +2,12 @@ import time
 import spidev
 import paho.mqtt.client as mqtt
 
-# --- MQTT Setup ---
+# MQTT Variables
 brokerIP = "10.152.53.186"
 brokerPort = 1883
 timeoutSeconds = 60
+
+# Minimum change in sensor value required to publish it
 minDiff = 30
 
 # Store last received values
