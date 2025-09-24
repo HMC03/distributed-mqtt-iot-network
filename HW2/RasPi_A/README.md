@@ -54,6 +54,10 @@
     ```
     source .venv/bin/activate
     ```
+* set broker ip environment variable
+    ```
+    export MQTT_BROKER=<your-broker-ip>
+    ```
 * execute script
     ```
     python3 raspiA.py
