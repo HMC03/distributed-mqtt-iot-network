@@ -1,5 +1,10 @@
 ## Laptop 1
 **Setup**
+* Install MQTT mosquitto
+    ```
+    sudo apt update
+    sudo apt install mosquitto mosquitto-clients -y
+    ```
 * Edit config
     ```
     sudo nano /etc/mosquitto/mosquitto.conf
