@@ -17,3 +17,25 @@
     ```
     pip install -r requirements.txt
     ```
+
+## SPI Setup
+* Open the firmware config file
+    ```
+    sudo nano /boot/firmware/config.txt
+    ```
+* Scroll to the bottom and add this line:
+    ```
+    dtoverlay=spi0-1cs
+    ```
+* Reboot
+    ```
+    sudo reboot
+    ```
+* After reboot, check devices
+    ```
+    ls /dev/spi*
+    ```
+    You should now see:
+    ```
+    /dev/spidev0.0
+    ```
