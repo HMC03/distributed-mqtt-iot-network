@@ -48,3 +48,13 @@
 * [MCP3208 ADC](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/21298e.pdf)
 * [KY-018 LDR](https://www.datasheethub.com/wp-content/uploads/2022/10/KY-018-Joy-IT.pdf)
 * [TSR-3386 Potentiometer](https://cdn.sparkfun.com/assets/2/b/1/1/7/TSR-3386.pdf)
+
+## Run Script
+* source virtual environment
+    ```
+    source .venv/bin/activate
+    ```
+* execute script
+    ```
+    python3 raspiA.py
+    ```
