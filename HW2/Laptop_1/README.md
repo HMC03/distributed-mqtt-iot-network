@@ -1,9 +1,14 @@
 ## Laptop 1
-**Setup**
+
+## Setup
 * Install MQTT mosquitto
     ```
     sudo apt update
     sudo apt install mosquitto mosquitto-clients -y
+    ```
+* Disable so it wont auto start
+    ```
+    sudo systemctl disable mosquitto
     ```
 * Edit config
     ```
@@ -36,3 +41,19 @@
     ipconfig
     ```
     Look for: Wireless LAN adapter Wi-Fi: IPv4 Address. . . . . . . . . . . : 10.152.6.37
+
+## Start Broker
+* start mosquitto service
+    ```
+    sudo service mosquitto start
+    ```
+* open powershell
+* share broker ip
+    ```
+    ipconfig
+    ```
+
+## Stop Broker
+```
+sudo service mosquitto stop
+```
