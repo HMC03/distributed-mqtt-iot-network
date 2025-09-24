@@ -1,3 +1,4 @@
+import os
 import time
 import spidev
 import paho.mqtt.client as mqtt
