@@ -6,9 +6,32 @@ import paho.mqtt.client as mqtt
 brokerIP = "10.152.53.186"
 brokerPort = 1883
 timeoutSeconds = 60
+minDiff = 30
+
+# Store last received values
+last_values = {
+    "lightSensor": 0,
+    "threshold": 0
+}
+
+# Subscribe to the same topics we publish to
+def on_connect(client, userdata, flags, reason_code, properties):
+    print("Connected to broker")
+    
+    client.subscribe("lightSensor")
+    client.subscribe("threshold")
+
+# Save the last values on topic
+def on_message(client, userdata, msg):
+    topic = msg.topic
+    payload = int(msg.payload.decode())
+    if topic in last_values:
+        last_values[topic] = payload
 
 # Create MQTT client
 raspiA = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+raspiA.on_connect = on_connect
+raspiA.on_message = on_message
 
 # Last Will (retained "offline")
 raspiA.will_set("Status/RaspberryPiA", payload="offline", retain=True)
@@ -39,20 +62,21 @@ def read_channel(channel):
 try:
     while True:
         # Read from channel 0 and 1
-        value0 = read_channel(0)
-        value1 = read_channel(1)
+        lightSensor = read_channel(0)
+        threshold = read_channel(1)
 
-        # Publish to MQTT
-        raspiA.publish("lightSensor", str(value0))
-        raspiA.publish("threshold", str(value1))
+        # Update lightSensor Value
+        if(abs(last_values["lightSensor"] - lightSensor) > minDiff):
+            raspiA.publish("lightSensor", str(lightSensor), retain=True)
+            print("lightSensor: ", lightSensor)
 
-        print(f"lightSensor: {value0}, threshold: {value1}")
+        # Update threshold Value
+        if(abs(last_values["threshold"] - threshold) > minDiff):
+            raspiA.publish("threshold", str(threshold), retain=True)
+            print("threshold: ", threshold)
 
         # Sample every 100ms
         time.sleep(0.1)
-
-except KeyboardInterrupt:
-    print("Stopping...")
 
 finally:
     # Publish "offline" retained status before shutting down
