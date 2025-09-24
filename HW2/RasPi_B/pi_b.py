@@ -2,13 +2,12 @@
 Raspberry Pi B - LED Controller
 Controls 3 LEDs based on light status and device status from other Raspberry Pi's
 """
-
 import paho.mqtt.client as mqtt
 from gpiozero import LED
 import time
 
-BROKER_HOST = "localhost" # Change to your broker's IP address'
-BROKER_PORT = 1883 # Default port
+BROKER_HOST = "localhost"  # Change to your broker's IP address
+BROKER_PORT = 1883  # Default port
 timeoutSeconds = 60
 CLIENT_ID = "RaspberryPiB"
 
@@ -37,8 +36,7 @@ class RaspberryPiB:
         # Status tracker
         self.piA_status = False
         self.piC_status = False
-        self.last_light_status = None
-
+        self.last_light_status = None # Please do not retain this value.
 
         # MQTT Client Setup
         self.client = mqtt.Client(CLIENT_ID)
@@ -53,10 +51,9 @@ class RaspberryPiB:
 
     def on_message(self, client, userdata, msg):
         # Handle messages and control LEDs
-        try :
+        try:
             topic = msg.topic
-            message = msg.payload.decode("utf-8") # Convert bytes to string
-
+            message = msg.payload.decode("utf-8")  # Convert bytes to string
             print(f"Received message on topic {topic}: {message}")
 
             if topic == LIGHT_STATUS_TOPIC:
@@ -84,8 +81,6 @@ class RaspberryPiB:
 
     def handle_status_a(self, status):
         # Handle Raspberry Pi A messages
-        self.piA_status = status
-
         if status == "online":
             self.piA_status = True
             self.led2.on()
@@ -97,14 +92,12 @@ class RaspberryPiB:
 
     def handle_status_c(self, status):
         # Handle Raspberry Pi C messages
-        self.piC_status = status
-
         if status == "online":
             self.piC_status = True
             self.led3.on()
             print("Raspberry Pi C is online - LED3 on")
 
-            if self.last_light_status:
+            if self.last_light_status == "TurnOn" or self.last_light_status == "TurnOff":
                 self.handle_light_status(self.last_light_status)
             else:
                 self.led1.off()
@@ -113,20 +106,18 @@ class RaspberryPiB:
             self.piC_status = False
             self.led1.off()
             self.led3.off()
+            print(self.last_light_status)
             print("Raspberry Pi C is offline - LED1 and LED3 off")
 
     def run(self):
         try:
             print("Starting Raspberry Pi B client...")
-            while True:
-                self.client.connect(BROKER_HOST, BROKER_PORT, timeoutSeconds)
-                self.client.loop_start()
+            self.client.connect(BROKER_HOST, BROKER_PORT, timeoutSeconds)
 
-                time.sleep(1)
-
+            print("Message ready to receive!")
+            self.client.loop_forever()
         except KeyboardInterrupt:
             print("\nShutting down...")
-
         finally:
             self.led1.off()
             self.led2.off()
