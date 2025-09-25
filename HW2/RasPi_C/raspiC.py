@@ -5,7 +5,7 @@ import paho.mqtt.client as mqtt
 # MQTT Variables
 brokerIP = os.environ.get("MQTT_BROKER", "localhost")
 brokerPort = 1883
-timeoutSeconds = 60
+timeoutSeconds = 5
 
 # Store last received values
 last_values = {
@@ -17,7 +17,11 @@ last_values = {
 # Subscribe to the same topics we publish to
 def on_connect(client, userdata, flags, reason_code, properties):
     print("Connected to broker")
+
+    # Publish "online" status (retained)
+    raspiC.publish("Status/RaspberryPiC", "online", qos=2, retain=True)
     
+    # Subscribe to topics
     client.subscribe("lightSensor", qos=2)
     client.subscribe("threshold", qos=2)
     client.subscribe("LightStatus", qos=2)
@@ -55,7 +59,6 @@ raspiC.will_set("Status/RaspberryPiC", payload="offline", qos=2, retain=True)
 
 # Connect and start background loop
 raspiC.connect(brokerIP, brokerPort, timeoutSeconds)
-raspiC.publish("Status/RaspberryPiC", "online", qos=2, retain=True)
 raspiC.loop_start()
 
 # Connect and loop forever
