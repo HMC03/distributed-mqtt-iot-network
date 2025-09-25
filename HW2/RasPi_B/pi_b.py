@@ -2,12 +2,13 @@
 Raspberry Pi B - LED Controller
 Controls 3 LEDs based on light status and device status from other Raspberry Pi's
 """
+
 import paho.mqtt.client as mqtt
 from gpiozero import LED
 import time
 
-BROKER_HOST = "localhost"  # Change to your broker's IP address
-BROKER_PORT = 1883  # Default port
+BROKER_HOST = "10.152.53.186" # Change to your broker's IP address'
+BROKER_PORT = 1883 # Default port
 timeoutSeconds = 60
 CLIENT_ID = "RaspberryPiB"
 
@@ -36,7 +37,7 @@ class RaspberryPiB:
         # Status tracker
         self.piA_status = False
         self.piC_status = False
-        self.last_light_status = None # Please do not retain this value.
+        self.last_light_status = None
 
         # MQTT Client Setup
         self.client = mqtt.Client(CLIENT_ID)
@@ -51,9 +52,10 @@ class RaspberryPiB:
 
     def on_message(self, client, userdata, msg):
         # Handle messages and control LEDs
-        try:
+        try :
             topic = msg.topic
-            message = msg.payload.decode("utf-8")  # Convert bytes to string
+            message = msg.payload.decode("utf-8") # Convert bytes to string
+
             print(f"Received message on topic {topic}: {message}")
 
             if topic == LIGHT_STATUS_TOPIC:
@@ -77,6 +79,7 @@ class RaspberryPiB:
                 self.led1.off()
                 print("Light is off - LED1 off")
         else:
+            self.led1.off()
             print("LightStatus message received but C is offline - LED1 off")
 
     def handle_status_a(self, status):
@@ -114,7 +117,7 @@ class RaspberryPiB:
             print("Starting Raspberry Pi B client...")
             self.client.connect(BROKER_HOST, BROKER_PORT, timeoutSeconds)
 
-            print("Message ready to receive!")
+            print("Message ready to receives!")
             self.client.loop_forever()
         except KeyboardInterrupt:
             print("\nShutting down...")
