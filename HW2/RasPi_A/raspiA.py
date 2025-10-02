@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 # MQTT Variables
 brokerIP = os.environ.get("MQTT_BROKER", "localhost")
 brokerPort = 1883
-timeoutSeconds = 60
+timeoutSeconds = 5
 
 # Minimum change in sensor value required to publish it
 minDiff = 30
@@ -21,6 +21,10 @@ last_values = {
 def on_connect(client, userdata, flags, reason_code, properties):
     print("Connected to broker")
     
+    # Publish "online" status (retained)
+    raspiA.publish("Status/RaspberryPiA", "online", qos=2, retain=True)
+    
+    # Subscribe to topics
     client.subscribe("lightSensor", qos=2)
     client.subscribe("threshold", qos=2)
 
@@ -39,13 +43,8 @@ raspiA.on_message = on_message
 # Last Will (retained "offline")
 raspiA.will_set("Status/RaspberryPiA", payload="offline", qos=2, retain=True)
 
-# Connect to broker
+# Connect and start background loop
 raspiA.connect(brokerIP, brokerPort, timeoutSeconds)
-
-# Publish "online" status (retained)
-raspiA.publish("Status/RaspberryPiA", "online", qos=2, retain=True)
-
-# Start loop in background so MQTT stays alive
 raspiA.loop_start()
 
 # --- SPI Setup (MCP3208) ---
