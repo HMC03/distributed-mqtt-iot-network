@@ -1,38 +1,43 @@
 # RasPi B
 
-## Prerequisites
-- Raspberry Pi (4+)
-- 3 LEDs
-- 3 220 ohms resistors (any resistor will do)
+## Role in the System  
+Acts as the visual indicator for system state using onboard LEDs.  
+- Subscribes to:
+  - `LightStatus` (main LED control from RasPi C)  
+  - `Status/RaspberryPiA` (online/offline status of RasPi A)  
+  - `Status/RaspberryPiC` (online/offline status of RasPi C)  
+- Drives 3 LEDs:  
+  - **LED1** → Current LightStatus (on/off)  
+  - **LED2** → RasPi A online/offline  
+  - **LED3** → RasPi C online/offline 
 
-### Packages
-
+## Venv Setup
 ```bash
-# Create a virtual environment to any desired location
-cd /Documents/{your_project_name}
+# install venv
+sudo apt install python3-venv -y
 
-# Make sure to use --system-site-packages flag
-python3 -m venv --system-site-packages {your_env_name}
-source {your_env_name}/bin/activate
+# create venv
+python3 -m venv .venv
 
-# If the package is not installed, install it
-pip3 install gpiozero paho-mqtt 
+# start venv
+source .venv/bin/activate
+
+# install dependencies
+pip install -r requirements.txt
 ```
 
-### Wiring Diagram
-![Wiring Diagram](./Images/Wiring_Diagram.png)
-- Feel free to use any GPIO pins for your LEDs.
-- For our code, we used GPIO 16, 20, 21.
-
-## Running the code
-Change the broker host and port to your broker host and port
-```python
-BROKER_HOST = {your_broker_host}
-BROKER_PORT = {your_broker_port}
-```
-
-Move the code to the raspberry pi if necessary. Then, run the code
+## Run Script
 ```bash
+# source virtual environment
+source .venv/bin/activate
+
+# set broker ip environment variable
+export BROKER_HOST=<your-broker-ip>
+
+# set broker port environment variable
+export BROKER_PORT=<your-broker-ip>
+
+# execute script
 python3 pi_b.py
 ```
 
@@ -45,6 +50,16 @@ Message ready to receive!
 ```
 
 The program will wait for MQTT messages. Initially, all LEDs should be OFF.
+
+## Wiring Diagram
+![Wiring Diagram](./Images/Wiring_Diagram.png)
+- Feel free to use any GPIO pins for your LEDs.
+- For our code, we used GPIO 16, 20, 21.
+
+## Parts list
+- Raspberry Pi (4+)
+- 3 LEDs
+- 3 220 ohms resistors (any resistor will do)
 
 ## Testing the Code
 

@@ -1,5 +1,30 @@
-# IOT_Projects_ECE592
-Repository to contain the IOT group projects in class ECE 592 Internet of Things Applications &amp; Implementation
+# Distributed MQTT IoT Network
 
-## HW2
-Multi-device IoT network using MQTT. Three Raspberry Pis (or similar boards) and two WiFi-enabled devices communicate via a locally hosted MQTT broker. Raspberry Pi A reads a light sensor and potentiometer and publishes their values. Raspberry Pi C subscribes to these values to determine LED states, while Raspberry Pi B displays LED status and tracks the online/offline state of other devices. All devices coordinate in real time through MQTT topics with retained messages and last-will notifications. 
+A multi-device IoT system demonstrating **real-time sensor-to-actuator control, device presence monitoring, and fault-tolerant messaging** using the **MQTT protocol**.
+
+## System Overview
+This project coordinates **three Raspberry Pis and two laptops** through a locally hosted MQTT broker.
+
+- **RasPi A** → Publishes sensor data (LDR + potentiometer) with retain + last-will.
+- **RasPi C** → Subscribes to sensor values, compares against thresholds, publishes LED control signals.
+- **RasPi B** → Subscribes to device statuses and LED signals, drives three LEDs for visualization.
+- **Laptop 1** → Runs MQTT broker.
+- **Laptop 2** → Subscribes to all topics, logs messages with timestamps.
+
+## Features
+- Distributed IoT architecture with multiple publishers and subscribers  
+- Online/offline detection using retained messages + last-will  
+- Real-time sensor threshold → actuator logic  
+- Centralized logging and duplicate message suppression  
+
+## Architecture Diagram
+```mermaid
+flowchart LR
+    subgraph Broker [Laptop 1 - MQTT Broker]
+    end
+    RasPiA -->|lightSensor/threshold| Broker
+    RasPiC -->|LightStatus| Broker
+    RasPiA -->|Status/RaspberryPiA| Broker
+    RasPiC -->|Status/RaspberryPiC| Broker
+    Broker --> RasPiB
+    Broker --> Laptop2
