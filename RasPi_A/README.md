@@ -40,7 +40,7 @@ ls /dev/spi*
 ```
 
 ## Circuit Diagram
-![RaspiA_circuit](media/RaspiA_circuit.png)
+<img src="media/RaspiA_circuit.png" width=50%>
 
 ## Parts List
 * Raspberry Pi 5
